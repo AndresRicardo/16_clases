@@ -46,7 +46,7 @@ function addStudent(name, age, approved = false) {
     clone.querySelector(".studentName").textContent =
         newStudent.name.toUpperCase();
 
-    clone.querySelector(".id").dataset.age = newStudent.id;
+    clone.querySelector(".id").dataset.id = newStudent.id;
     clone.querySelector(".id").textContent = `Id: S${newStudent.id}`;
 
     clone.querySelector(".age").dataset.age = newStudent.age;
@@ -70,7 +70,7 @@ function addTeacher(name, age, plant = false) {
     clone.querySelector(".teacherName").textContent =
         newTeacher.name.toUpperCase();
 
-    clone.querySelector(".id").dataset.age = newTeacher.id;
+    clone.querySelector(".id").dataset.id = newTeacher.id;
     clone.querySelector(".id").textContent = `Id: T${newTeacher.id}`;
 
     clone.querySelector(".age").dataset.age = newTeacher.age;
@@ -84,6 +84,89 @@ function addTeacher(name, age, plant = false) {
     regs.querySelector("#teachers").appendChild(fragmento);
 }
 
+function deleteStudent(event) {
+    card = event.target.parentElement.parentElement;
+
+    // si se da click en una tarjeta de estudiante
+    if (card.classList.contains("studentCard")) {
+        // obtener el id del estudiante
+        id = card.querySelector(".id").dataset.id;
+        console.log("id a eliminar: " + id);
+        //eliminar el estudiante del registro
+        studentsArray.forEach((element) => {
+            if (element.id == id) {
+                console.log("id a eliminar: " + id);
+                studentsArray.splice(studentsArray.indexOf(element), 1);
+            }
+        });
+        //eliminar card
+        card.parentElement.removeChild(card);
+    }
+}
+
+function deleteTeacher(event) {
+    console.log("click en boton Delete");
+    card = event.target.parentElement.parentElement;
+
+    // si se da click en una tarjeta de teacher
+    if (card.classList.contains("teacherCard")) {
+        card.parentElement.removeChild(card);
+        // obtener el id del teacher
+        id = card.querySelector(".id").dataset.id;
+        console.log("id a eliminar: " + id);
+        //eliminar el teacher del registro
+        teachersArray.forEach((element) => {
+            if (element.id == id) {
+                console.log("id a eliminar: " + id);
+                teachersArray.splice(teachersArray.indexOf(element), 1);
+            }
+        });
+    }
+}
+
+function updateStudentButtons(card) {
+    //deshabilitar boton aprobar
+    card.querySelector(".cardButtons .cardButtonAprobar").classList.toggle(
+        "disabled"
+    );
+    //habilitar boton reprobar
+    card.querySelector(".cardButtons .cardButtonReprobar").classList.toggle(
+        "disabled"
+    );
+}
+
+function approveStudent(event) {
+    console.log("click en boton Approve");
+    card = event.target.parentElement.parentElement;
+
+    // si se da click en una tarjeta de estudiante
+    if (card.classList.contains("studentCard")) {
+        studentState = card.querySelector(".cardHead .studentState");
+
+        //cambiar dataset.status
+        studentState.dataset.status = "Approved";
+        //cambiar texto del elemento
+        studentState.textContent = studentState.dataset.status;
+        updateStudentButtons(card);
+    }
+}
+
+function reprobateStudent(event) {
+    console.log("click en boton Reprobate");
+    card = event.target.parentElement.parentElement;
+
+    // si se da click en una tarjeta de estudiante
+    if (card.classList.contains("studentCard")) {
+        studentState = card.querySelector(".cardHead .studentState");
+
+        //cambiar dataset.status
+        studentState.dataset.status = "Reprobate";
+        //cambiar texto del elemento
+        studentState.textContent = studentState.dataset.status;
+        updateStudentButtons(card);
+    }
+}
+
 createButton.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -95,6 +178,21 @@ createButton.addEventListener("click", (event) => {
     }
 });
 
-// document.addEventListener("click", (event) => {
-//     console.log(event.target);
-// });
+document.addEventListener("click", (event) => {
+    // click en boton aprobarStudent
+    if (event.target.classList.contains("cardButtonAprobar")) {
+        approveStudent(event);
+    }
+    // click en boton reprobarStudent
+    if (event.target.classList.contains("cardButtonReprobar")) {
+        reprobateStudent(event);
+    }
+    // click en boton deleteStudent
+    if (event.target.classList.contains("cardButtonEliminar")) {
+        deleteStudent(event);
+    }
+    // click en boton deleteTeacher
+    if (event.target.classList.contains("cardButtonEliminar")) {
+        deleteTeacher(event);
+    }
+});
